@@ -1,0 +1,8 @@
+{
+  "short_name": "MedicalERP",
+  "name": "Medical ERP Frontend",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "description": "Medical ERP frontend"
+}

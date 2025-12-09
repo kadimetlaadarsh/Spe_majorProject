@@ -1,0 +1,117 @@
+# docker-compose.yml (fixed service folder names & env_file paths)
+services:
+  mongo:
+    image: mongo:6
+    container_name: spe_mongo
+    restart: unless-stopped
+    volumes:
+      - mongodata:/data/db
+    ports:
+      - "27017:27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  auth-service:
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    container_name: auth-service
+    restart: unless-stopped
+    env_file:
+      - ./auth-service/.env
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/medical_auth
+    ports:
+      - "4000:4000"
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+  patient-service:
+    build:
+      context: ./patient-service
+      dockerfile: Dockerfile
+    container_name: patient-service
+    restart: unless-stopped
+    env_file:
+      - ./patient-service/.env
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/medical_patient
+    ports:
+      - "4100:4100"
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+  scans-service:
+    build:
+      context: ./scans-service
+      dockerfile: Dockerfile
+    container_name: scans-service
+    restart: unless-stopped
+    env_file:
+      - ./scans-service/.env
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/medical_scans
+    volumes:
+      - scan_uploads:/app/uploads/scans
+    ports:
+      - "4200:4200"
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+  appointment-service:
+    build:
+      context: ./appointment-service
+      dockerfile: Dockerfile
+    container_name: appointment-service
+    restart: unless-stopped
+    env_file:
+      - ./appointment-service/.env
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/medical_appointment
+    ports:
+      - "4300:4300"
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+  billing-service:
+    build:
+      context: ./billing-service
+      dockerfile: Dockerfile
+    container_name: billing-service
+    restart: unless-stopped
+    env_file:
+      - ./billing-service/.env
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/medical_billing
+    ports:
+      - "4400:4400"
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+  prescription-service:
+    build:
+      context: ./prescription-service
+      dockerfile: Dockerfile
+    container_name: prescription-service
+    restart: unless-stopped
+    env_file:
+      - ./prescription-service/.env
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/medical_prescription
+    ports:
+      - "4500:4500"
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+volumes:
+  mongodata:
+  scan_uploads:

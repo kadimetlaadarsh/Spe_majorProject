@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: appointment-service
+  labels:
+    app: appointment-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: appointment-service
+  template:
+    metadata:
+      labels:
+        app: appointment-service
+    spec:
+      containers:
+      - name: appointment-service
+        image: adarshareddy69/appointment-service:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 4300
+        env:
+        - name: MONGO_URI
+          value: "mongodb://mongo:27017/medical_appointment"
+        - name: PORT
+          value: "4300"
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: appointment-service
+spec:
+  selector:
+    app: appointment-service
+  ports:
+  - port: 4300
+    targetPort: 4300
+  type: ClusterIP

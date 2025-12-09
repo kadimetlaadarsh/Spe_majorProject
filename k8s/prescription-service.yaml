@@ -1,0 +1,50 @@
+################################################################
+# prescription-service
+################################################################
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prescription-service
+  labels:
+    app: prescription-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prescription-service
+  template:
+    metadata:
+      labels:
+        app: prescription-service
+    spec:
+      containers:
+      - name: prescription-service
+        image: adarshareddy69/prescription-service:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 4500
+        env:
+        - name: MONGO_URI
+          value: "mongodb://mongo:27017/medical_prescription"
+        - name: PORT
+          value: "4500"
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prescription-service
+spec:
+  selector:
+    app: prescription-service
+  ports:
+  - port: 4500
+    targetPort: 4500
+  type: ClusterIP

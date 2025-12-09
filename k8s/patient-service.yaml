@@ -1,0 +1,50 @@
+################################################################
+# patient-service
+################################################################
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: patient-service
+  labels:
+    app: patient-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: patient-service
+  template:
+    metadata:
+      labels:
+        app: patient-service
+    spec:
+      containers:
+      - name: patient-service
+        image: adarshareddy69/patient-service:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 4100
+        env:
+        - name: MONGO_URI
+          value: "mongodb://mongo:27017/medical_patient"
+        - name: PORT
+          value: "4100"
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: patient-service
+spec:
+  selector:
+    app: patient-service
+  ports:
+  - port: 4100
+    targetPort: 4100
+  type: ClusterIP

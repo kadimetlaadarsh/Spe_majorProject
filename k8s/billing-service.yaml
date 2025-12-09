@@ -1,0 +1,50 @@
+################################################################
+# billing-service
+################################################################
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: billing-service
+  labels:
+    app: billing-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: billing-service
+  template:
+    metadata:
+      labels:
+        app: billing-service
+    spec:
+      containers:
+      - name: billing-service
+        image: adarshareddy69/billing-service:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 4400
+        env:
+        - name: MONGO_URI
+          value: "mongodb://mongo:27017/medical_billing"
+        - name: PORT
+          value: "4400"
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: billing-service
+spec:
+  selector:
+    app: billing-service
+  ports:
+  - port: 4400
+    targetPort: 4400
+  type: ClusterIP

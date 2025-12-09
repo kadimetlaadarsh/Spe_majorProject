@@ -1,0 +1,11 @@
+# Ignore the entire node_modules folder in the frontend directory
+/frontend/node_modules
+
+# Ignore all .env files located anywhere in the project
+# (This includes service/.env, service/another-service/.env, etc.)
+**/.env
+
+# Optional: Common Node/npm ignores for the root or any other service folder
+/node_modules
+npm-debug.log
+.DS_Store

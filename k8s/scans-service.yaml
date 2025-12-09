@@ -1,0 +1,56 @@
+################################################################
+# scans-service
+################################################################
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scans-service
+  labels:
+    app: scans-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: scans-service
+  template:
+    metadata:
+      labels:
+        app: scans-service
+    spec:
+      containers:
+      - name: scans-service
+        image: adarshareddy69/scans-service:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 4200
+        env:
+        - name: MONGO_URI
+          value: "mongodb://mongo:27017/medical_scans"
+        - name: PORT
+          value: "4200"
+        volumeMounts:
+        - name: scan-uploads
+          mountPath: /app/uploads/scans
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+      volumes:
+      - name: scan-uploads
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: scans-service
+spec:
+  selector:
+    app: scans-service
+  ports:
+  - port: 4200
+    targetPort: 4200
+  type: ClusterIP

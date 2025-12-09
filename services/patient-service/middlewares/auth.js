@@ -1,0 +1,15 @@
+const jwt = require('jsonwebtoken');
+
+// same pattern as auth-service's verify but uses JWT_SECRET of auth service (shared)
+exports.verifyToken = (req, res, next) => {
+  const header = req.headers.authorization;
+  if (!header) return res.status(401).json({ message: 'No token' });
+  const token = header.split(' ')[1];
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (err) {
+    return res.status(401).json({ message: 'Invalid token' });
+  }
+};

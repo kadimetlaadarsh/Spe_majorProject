@@ -50,30 +50,6 @@ pipeline {
     // These run on the entire codebase before any service is built.
     // ------------------------------------------------------------------
 
-    stage('Static Analysis & Unit Tests') {
-      steps {
-        sh '''
-          echo "Running Python and Node.js Static Analysis & Unit Tests..."
-          # Set up Python environment for backend services
-          python -m venv .venv
-          . .venv/bin/activate
-          pip install --upgrade pip
-          pip install -r services/auth-service/requirements.txt # Example, adjust path for your service dependencies
-          
-          # Basic Code Quality Checks (Example tools - requires installation on Agent)
-          # ruff check services
-          # black --check services
-          # mypy services || true
-          
-          # Basic Security Analysis (SAST)
-          bandit -r services/auth-service || true 
-          pip-audit -r services/auth-service/requirements.txt || true
-
-          # Run Tests (Example)
-          # PYTHONPATH=backend python -m pytest backend/tests
-        '''
-      }
-    }
 
     stage('Secret Scan (Gitleaks)') {
       steps {

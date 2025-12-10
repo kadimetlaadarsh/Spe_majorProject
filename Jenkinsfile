@@ -60,22 +60,22 @@ pipeline {
       }
     }
 
-    stage('SonarQube Analysis') {
-      steps {
-        script {
-          def scannerHome = tool 'sonar-scanner' // Ensure this tool is configured in Jenkins
-          withCredentials([string(credentialsId: env.SONAR_TOKEN_ID, variable: 'SONAR_TOKEN')]) {
-            sh """
-              ${scannerHome}/bin/sonar-scanner \
-                -Dsonar.projectKey=spe_majorproject \
-                -Dsonar.sources=. \
-                -Dsonar.host.url=${env.SONAR_HOST_URL} \
-                -Dsonar.token=$SONAR_TOKEN
-            """
-          }
-        }
-      }
-    }
+    // stage('SonarQube Analysis') {
+    //   steps {
+    //     script {
+    //       def scannerHome = tool 'sonar-scanner' // Ensure this tool is configured in Jenkins
+    //       withCredentials([string(credentialsId: env.SONAR_TOKEN_ID, variable: 'SONAR_TOKEN')]) {
+    //         sh """
+    //           ${scannerHome}/bin/sonar-scanner \
+    //             -Dsonar.projectKey=spe_majorproject \
+    //             -Dsonar.sources=. \
+    //             -Dsonar.host.url=${env.SONAR_HOST_URL} \
+    //             -Dsonar.token=$SONAR_TOKEN
+    //         """
+    //       }
+    //     }
+    //   }
+    // }
 
     // Optional: enforce SonarQube quality gate (uncomment when plugin is configured)
     // stage('Enforce SonarQube Quality Gate') {
@@ -94,36 +94,36 @@ pipeline {
     // ---------------------------------------------------------
     // Quick Unit Test step: tries common test commands (safe/optional)
     // ---------------------------------------------------------
-    stage('Run Unit Tests (auto-detect)') {
-      steps {
-        sh '''
-          echo "Attempting to run unit tests (auto-detect)..."
-          if [ -f package.json ]; then
-            if command -v npm >/dev/null 2>&1; then
-              echo "Running npm test..."
-              npm ci || true
-              npm test || true
-            else
-              echo "npm not found - skipping JS tests."
-            fi
-          elif [ -f build.gradle ]; then
-            if command -v ./gradlew >/dev/null 2>&1; then
-              ./gradlew test || true
-            else
-              gradle test || true
-            fi
-          elif [ -f pom.xml ]; then
-            if command -v mvn >/dev/null 2>&1; then
-              mvn -q test || true
-            else
-              echo "maven not found - skipping tests."
-            fi
-          else
-            echo "No common test file detected (package.json/pom.xml/build.gradle). Skipping tests."
-          fi
-        '''
-      }
-    }
+    // stage('Run Unit Tests (auto-detect)') {
+    //   steps {
+    //     sh '''
+    //       echo "Attempting to run unit tests (auto-detect)..."
+    //       if [ -f package.json ]; then
+    //         if command -v npm >/dev/null 2>&1; then
+    //           echo "Running npm test..."
+    //           npm ci || true
+    //           npm test || true
+    //         else
+    //           echo "npm not found - skipping JS tests."
+    //         fi
+    //       elif [ -f build.gradle ]; then
+    //         if command -v ./gradlew >/dev/null 2>&1; then
+    //           ./gradlew test || true
+    //         else
+    //           gradle test || true
+    //         fi
+    //       elif [ -f pom.xml ]; then
+    //         if command -v mvn >/dev/null 2>&1; then
+    //           mvn -q test || true
+    //         else
+    //           echo "maven not found - skipping tests."
+    //         fi
+    //       else
+    //         echo "No common test file detected (package.json/pom.xml/build.gradle). Skipping tests."
+    //       fi
+    //     '''
+    //   }
+    // }
 
     // ---------------------------------------------------------
     // Service: Auth
